@@ -1,0 +1,38 @@
+{
+    "name": "local_fabric",
+    "version": "1.0.0",
+    "wallet": "local_fabric_wallet",
+    "client": {
+        "organization": "org1MSP",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "organizations": {
+        "org1MSP": {
+            "mspid": "org1MSP",
+            "peers": [
+                "peer0.org1.hurley.lab"
+            ],
+            "certificateAuthorities": [
+                "ca.org1.hurley.lab"
+            ]
+        }
+    },
+    "peers": {
+        "peer0.org1.hurley.lab": {
+            "url": "grpc://localhost:7051"
+        }
+    },
+    "certificateAuthorities": {
+        "ca.org1.hurley.lab": {
+            "url": "http://localhost:7054",
+            "caName": "ca.org1.hurley.lab"
+        }
+    }
+}
