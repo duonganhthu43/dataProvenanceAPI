@@ -19,25 +19,30 @@ export class UserWalletService {
     private readonly userWalletRepository: Repository<UserWalletEntity>,
   ) { }
 
-  async createUser(dto: { username: string, password: string, email: string, fabricIdentity: any, organization: string }): Promise<UserWalletEntity> {
-    console.log('====== dto ', dto)
-    const { username, password, email, fabricIdentity, organization } = dto
+  async createUser(dto: { username: string, password: string, email: string, fabricIdentity: any, organization: string, attributes: any }): Promise<UserWalletEntity> {
+    const { username, password, email, fabricIdentity, organization, attributes } = dto
     const querry = await getRepository(UserWalletEntity)
       .createQueryBuilder('user')
       .where('user.username = :username', { username }).orWhere('user.email = :email', { email })
     const userByUserNameOrEmail = await querry.getOne()
-    if (userByUserNameOrEmail) {
-      const errors = { username: 'Username and email must be unique.' };
-      throw new HttpException({ message: 'Input data validation failed', errors }, HttpStatus.BAD_REQUEST);
-    }
+    // if (userByUserNameOrEmail) {
+    //   const errors = { username: 'Username and email must be unique.' };
+    //   throw new HttpException({ message: 'Input data validation failed', errors }, HttpStatus.BAD_REQUEST);
+    // }
     // create new user 
-    let newUser = new UserWalletEntity()
+    let newUser: UserWalletEntity;
+    if (userByUserNameOrEmail) {
+      newUser = userByUserNameOrEmail
+    } else {
+      newUser = new UserWalletEntity()
+    }
+
     newUser.username = username;
-    newUser.password = password
+    newUser.password = crypto.createHmac('sha256', password).digest('hex')
     newUser.email = email
     newUser.fabricIdentity = fabricIdentity
     newUser.organization = [organization]
-    newUser.attributes = []
+    newUser.attributes = attributes
     const errors = await validate(newUser);
     if (errors.length > 0) {
       const _errors = { username: 'Userinput is not valid.' };

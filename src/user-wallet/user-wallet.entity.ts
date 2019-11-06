@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, AfterLoad } from "typeorm";
 import { IsEmail, Validate } from 'class-validator';
 import * as crypto from 'crypto';
+import { Identity, InMemoryWallet } from "fabric-network";
+import { FabricService } from "../fabric/fabric.service";
 
 @Entity('wallet')
 export class UserWalletEntity {
@@ -19,19 +21,18 @@ export class UserWalletEntity {
   password: string;
 
   @Column("simple-json")
-  fabricIdentity: {};
+  fabricIdentity: Identity;
 
   @Column("simple-array")
   organization: string[];
 
   @Column("simple-json", {nullable: true})
   attributes: any
-  
-  @BeforeInsert()
-  hashPassword() {
-    console.log('==== hashPassword', crypto.createHmac('sha256', this.password).digest('hex'))
-    console.log('==== hashPassword', this.password)
 
-    this.password = crypto.createHmac('sha256', this.password).digest('hex');
+  wallet: InMemoryWallet
+  
+  @AfterLoad()
+  async loadWallet() {
+    this.wallet =  await FabricService.createWalletFromFabricIdentity(this.username, this.fabricIdentity)
   }
 }

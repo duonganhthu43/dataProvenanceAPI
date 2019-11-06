@@ -3,8 +3,9 @@
     "host": "localhost",
     "port": 3306,
     "username": "root",
-    "password": "adminpw",
+    "password": "admin",
     "database": "usersWallet",
+    "insecureAuth": "true",
     "entities": [
       "dist/src/**/*.entity{.ts,.js}"
     ],

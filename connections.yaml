@@ -1,0 +1,75 @@
+name: "org1"
+version: "1.0"
+
+client:
+    organization: org1MSP
+
+channels:
+    ch1:
+        orderers:
+            - orderer.hurley.lab
+        peers:
+            peer0.org1.hurley.lab:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+        
+            peer0.org2.hurley.lab:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+        
+organizations:
+    org1MSP:
+        mspid: org1MSP
+        peers:
+            - peer0.org1.hurley.lab
+        certificateAuthorities:
+            - ca.org1.hurley.lab
+    org2MSP:
+        mspid: org2MSP
+        peers:
+            - peer0.org2.hurley.lab
+        certificateAuthorities:
+            - ca.org2.hurley.lab
+orderers:
+    orderer.hurley.lab:
+        url: grpc://localhost:7050
+        grpcOptions:
+            ssl-target-name-override: orderer.hurley.lab
+            grpc-max-send-message-length: -1
+peers:
+    peer0.org1.hurley.lab:
+        url: grpc://localhost:7051
+        eventUrl: grpc://localhost:7052
+        grpcOptions:
+            ssl-target-name-override: peer0.org1.hurley.lab
+            grpc.keepalive_time_ms: 600000
+    peer0.org2.hurley.lab:
+        url: grpc://localhost:7151
+        eventUrl: grpc://localhost:7152
+        grpcOptions:
+            ssl-target-name-override: peer0.org2.hurley.lab
+            grpc.keepalive_time_ms: 600000
+certificateAuthorities:
+    ca.org1.hurley.lab:
+        url: http://localhost:7054
+        httpOptions:
+            verify: false
+        registrar:
+            - enrollId: admin
+              enrollSecret: adminpw
+        caName: ca.org1.hurley.lab
+
+    ca.org2.hurley.lab:
+        url: http://localhost:7154
+        httpOptions:
+            verify: false
+        registrar:
+            - enrollId: admin
+              enrollSecret: adminpw
+        caName: ca.org2.hurley.lab
+
+  

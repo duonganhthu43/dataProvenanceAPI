@@ -12,8 +12,6 @@ export class AuthService {
     return await this.userWalletService.findByUserNamePassord({username: user.username, password: crypto.createHmac('sha256', user.password).digest('hex')})
   }
   async login(user: { username: string, password: string }): Promise<{ access_token: string }> {
-    console.log('===== login user AuthService', user)
-    //const payload = { username: user.username, sub: user.userId };
     return {
       access_token: this.jwtService.sign(user),
     };
